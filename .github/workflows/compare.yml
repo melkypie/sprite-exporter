@@ -1,0 +1,86 @@
+on:
+  workflow_dispatch:
+    inputs:
+      AS_ARTIFACTS:
+        description: "Upload as artifacts"
+        required: false
+        default: 'false'
+      OLD_CACHE:
+        description: "Previous cache version"
+        required: false
+      NEW_CACHE:
+        description: "Next cache version"
+        required: false
+
+name: Sprite differ
+jobs:
+  compare:
+    name: "Sprite comparison between OSRS revs"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Generate sprites and diffs
+        id: build
+        env:
+          OLD_CACHE: ${{ github.event.inputs.OLD_CACHE }}
+          NEW_CACHE: ${{ github.event.inputs.NEW_CACHE }}
+        run: |
+          set -e -x
+          [[ -z "${OLD_CACHE}" || -z "${NEW_CACHE}" ]] && curl -s https://api.github.com/repos/abextm/osrs-cache/releases > releases.json
+          [[ -z "${OLD_CACHE}" ]] && export OLD_CACHE=$(jq -r '.[1].tag_name' releases.json)
+          [[ -z "${NEW_CACHE}" ]] && export NEW_CACHE=$(jq -r '.[0].tag_name' releases.json)
+          echo "::set-output name=old_cache::${OLD_CACHE}"
+          echo "::set-output name=new_cache::${NEW_CACHE}"
+          for CACHE in $OLD_CACHE $NEW_CACHE; do \
+            curl -s https://api.github.com/repos/abextm/osrs-cache/releases/tags/$CACHE \
+              | jq -r '.tarball_url' \
+              | wget -qi- -O $CACHE.tar.gz; \
+            mkdir -p cache/$CACHE/sprites; \
+            tar -xzf $CACHE.tar.gz --strip 1 -C cache/$CACHE; \
+          done
+          java -Dcache.folder="cache/" -Dcache.old=$OLD_CACHE -Dcache.new=$NEW_CACHE -jar shadow.jar
+          cd cache && mkdir -p modified/diff && mkdir -p added && mkdir deleted && mkdir renamed
+          git --no-pager diff --diff-filter=ADRM --no-index --name-status $OLD_CACHE/sprites/ $NEW_CACHE/sprites/ \
+            | awk '{switch ($1) { \
+              case "A": \
+                system("cp "$2" added/"); \
+                break; \
+              case "D": \
+                system("cp "$2" deleted/"); \
+                break; \
+              case /R[[:digit:]]+/: \
+                img1 = gensub(/.*sprites\/(.*)\.png/, "\\1", "g", $2); \
+                img2 = gensub(/.*sprites\/(.*)\.png/, "\\1", "g", $3); \
+                system("cp "$3" renamed/"img1"=to="img2".png"); \
+                break; \
+              case "M": \
+                img=$2; \
+                gsub(ENVIRON["OLD_CACHE"]"/sprites/", "", img); \
+                system("compare -compose src "$2" "ENVIRON["NEW_CACHE"]"/sprites/"img" modified/diff/"img); \
+                system("convert "$2" modified/diff/"img" "ENVIRON["NEW_CACHE"]"/sprites/"img" +append modified/"img); \
+                break; \
+              }}'
+          zip -qr $NEW_CACHE-sprites.zip $NEW_CACHE/sprites
+          zip -qr $OLD_CACHE--$NEW_CACHE-diff.zip added/ renamed/ modified/ deleted/
+      - name: Upload sprites and diff to releases
+        uses: ncipollo/release-action@v1
+        if: ${{ github.event.inputs.AS_ARTIFACTS == 'false' }}
+        with:
+          name: Sprite dump ${{ steps.build.outputs.new_cache }}
+          allowUpdates: true
+          omitBody: true
+          tag: ${{ steps.build.outputs.new_cache }}
+          artifacts: "cache/*-sprites.zip,cache/*-diff.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit: master
+      - name: Upload sprites and diff as artifacts
+        if: ${{ github.event.inputs.AS_ARTIFACTS == 'true'}}
+        uses: actions/upload-artifact@v2
+        with:
+          name: sprite-diffs-${{ steps.build.outputs.new_cache }}
+          path: |
+            cache/*-sprites.zip
+            cache/*-diff.zip
