@@ -29,15 +29,13 @@ jobs:
           NEW_CACHE: ${{ github.event.inputs.NEW_CACHE }}
         run: |
           set -e -x
-          [[ -z "${OLD_CACHE}" || -z "${NEW_CACHE}" ]] && curl -s https://api.github.com/repos/abextm/osrs-cache/releases > releases.json
-          [[ -z "${OLD_CACHE}" ]] && export OLD_CACHE=$(jq -r '.[1].tag_name' releases.json)
-          [[ -z "${NEW_CACHE}" ]] && export NEW_CACHE=$(jq -r '.[0].tag_name' releases.json)
+          [[ -z "${OLD_CACHE}" || -z "${NEW_CACHE}" ]] && curl -s https://api.github.com/repos/abextm/osrs-cache/commits > commits.json
+          [[ -z "${OLD_CACHE}" ]] && export OLD_CACHE=$(jq -r '.[1].commit.message' commits.json | sed 's/Cache version //')
+          [[ -z "${NEW_CACHE}" ]] && export NEW_CACHE=$(jq -r '.[0].commit.message' commits.json | sed 's/Cache version //')
           echo "::set-output name=old_cache::${OLD_CACHE}"
           echo "::set-output name=new_cache::${NEW_CACHE}"
           for CACHE in $OLD_CACHE $NEW_CACHE; do \
-            curl -s https://api.github.com/repos/abextm/osrs-cache/releases/tags/$CACHE \
-              | jq -r '.tarball_url' \
-              | wget -qi- -O $CACHE.tar.gz; \
+            wget -q https://api.github.com/repos/abextm/osrs-cache/tarball/refs/tags/$CACHE -O $CACHE.tar.gz; \
             mkdir -p cache/$CACHE/sprites; \
             tar -xzf $CACHE.tar.gz --strip 1 -C cache/$CACHE; \
           done
