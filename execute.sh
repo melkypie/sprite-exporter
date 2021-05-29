@@ -16,8 +16,12 @@ for CACHE in $OLD_CACHE $NEW_CACHE; do
   tar -xzf $CACHE.tar.gz --strip 1 -C cache/$CACHE;
 done
 
+curl -o src/main/java/melky/SpriteOverride.java https://raw.githubusercontent.com/melkypie/resource-packs/master/src/main/java/melky/resourcepacks/SpriteOverride.java
+sed -i 's/package melky\.resourcepacks/package melky/' src/main/java/melky/SpriteOverride.java
+chmod +x gradlew
+./gradlew clean shadowJar
 # Dump the sprites using correct sizing
-java -Dcache.folder="cache/" -Dcache.old=$OLD_CACHE -Dcache.new=$NEW_CACHE -jar shadow.jar
+java -Dcache.folder="cache/" -Dcache.old=$OLD_CACHE -Dcache.new=$NEW_CACHE -jar shadow.jar dump
 
 # Add the changed/modified/deleted/renamed sprites to their respective directories
 # Also perform a diff in case of modified
