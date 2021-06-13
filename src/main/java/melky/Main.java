@@ -153,7 +153,16 @@ public class Main
 							continue;
 						}
 
-						File originalSprite = new File(spriteDir + "/" + override.getSpriteID() + "-0.png");
+						File originalSprite;
+						if (override.getFrameID() != -1)
+						{
+							originalSprite = new File(spriteDir + "/" + override.getSpriteID() + "-" + override.getFrameID() + ".png");
+						}
+						else
+						{
+							originalSprite = new File(spriteDir + "/" + override.getSpriteID() + "-0.png");
+						}
+
 						if (!delete && fileContentEquals(file, originalSprite))
 						{
 							log.info("File " + file.getName() + " (" + override.getSpriteID() + ") in folder " + dirName + " is the same as the vanilla sprite");
