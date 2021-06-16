@@ -69,7 +69,15 @@ public class Main
 			}
 			File folder = createOrRetrieve(outputFolder + "/" + override.getFolder().toString().toLowerCase());
 			File destinationSprite = new File(folder, override.toString().toLowerCase().replaceFirst(override.getFolder().toString().toLowerCase() + "_", "") + ".png");
-			File sourceSprite = new File(inputFolder + "/" + override.getSpriteID() + "-0.png");
+			File sourceSprite;
+			if (override.getFrameID() != -1)
+			{
+				sourceSprite = new File(inputFolder + "/" + override.getSpriteID() + "-" + override.getFrameID() + ".png");
+			}
+			else
+			{
+				sourceSprite = new File(inputFolder + "/" + override.getSpriteID() + "-0.png");
+			}
 
 			if (sourceSprite.exists() && !(destinationSprite.exists() && fileContentEquals(sourceSprite, destinationSprite)))
 			{
