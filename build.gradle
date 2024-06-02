@@ -29,7 +29,7 @@ lombok {
     generateLombokConfig.enabled = false
 }
 
-def runeliteVersion = "1.10.31.3"
+def runeliteVersion = "1.8.19"
 
 dependencies {
     implementation "org.slf4j:slf4j-simple:1.7.12"
@@ -38,10 +38,10 @@ dependencies {
 }
 
 description = "Resource packs sprite exporter"
+sourceCompatibility = "1.8"
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    options.release.set(11)
 }
 
 shadowJar {
