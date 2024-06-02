@@ -29,7 +29,7 @@ lombok {
     generateLombokConfig.enabled = false
 }
 
-def runeliteVersion = "latest.release"
+def runeliteVersion = "1.10.31.3"
 
 dependencies {
     implementation "org.slf4j:slf4j-simple:1.7.12"
