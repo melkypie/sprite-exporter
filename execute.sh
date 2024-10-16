@@ -23,6 +23,9 @@ chmod +x gradlew
 # Dump the sprites using correct sizing
 java -Dcache.folder="cache/" -Dcache.old=$OLD_CACHE -Dcache.new=$NEW_CACHE -jar shadow.jar dump
 
+# From Ubuntu 24.04 image in Github actions imagemagick is no longer included by default
+sudo apt update
+sudo apt install -y imagemagick
 # Add the changed/modified/deleted/renamed sprites to their respective directories
 # Also perform a diff in case of modified
 # May throw an error if the images are different widths
