@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import melky.resourcepacks.SpriteOverride;
 import net.runelite.cache.fs.Store;
 import net.runelite.cache.fs.flat.FlatStorage;
 
@@ -67,8 +68,10 @@ public class Main
 			{
 				continue;
 			}
-			File folder = createOrRetrieve(outputFolder + "/" + override.getFolder().toString().toLowerCase());
-			File destinationSprite = new File(folder, override.toString().toLowerCase().replaceFirst(override.getFolder().toString().toLowerCase() + "_", "") + ".png");
+
+			String name =  override.getFolder() + "";
+			File folder = createOrRetrieve(outputFolder + "/" + name.toLowerCase());
+			File destinationSprite = new File(folder, override.toString().toLowerCase().replaceFirst(name.toLowerCase() + "_", "") + ".png");
 			File sourceSprite;
 			if (override.getFrameID() != -1)
 			{

@@ -1,20 +1,15 @@
 plugins {
     id 'java'
-    id "io.freefair.lombok" version "5.0.0-rc6"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id 'io.ryoung.java-downloader'
 }
 
 group 'melky'
 version '1.0'
 
 repositories {
-    mavenLocal() {
-        content {
-            includeGroup "net.runelite"
-        }
-    }
+    mavenLocal()
     maven {
-        url "https://repo.runelite.net"
+        url = 'https://repo.runelite.net'
     }
     mavenCentral()
 }
@@ -25,16 +20,19 @@ jar {
     }
 }
 
-lombok {
-    generateLombokConfig.enabled = false
+javaDownload {
+    sourceUrl = 'https://raw.githubusercontent.com/melkypie/resource-packs/refs/heads/master/src/main/java/melky/resourcepacks/SpriteOverride.java'
+    targetPath = 'src/main/java/melky/resourcepacks/SpriteOverride.java'
 }
 
-def runeliteVersion = "1.10.31.3"
+def runeLiteVersion = "latest.release"
 
 dependencies {
-    implementation "org.slf4j:slf4j-simple:1.7.12"
-    implementation "net.runelite:cache:${runeliteVersion}"
-    implementation "net.runelite:runelite-api:${runeliteVersion}"
+    implementation group: 'net.runelite', name: 'cache', version: runeLiteVersion
+    implementation group: 'net.runelite', name: 'runelite-api', version: runeLiteVersion
+
+    implementation 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 description = "Resource packs sprite exporter"
@@ -42,9 +40,4 @@ description = "Resource packs sprite exporter"
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.release.set(11)
-}
-
-shadowJar {
-    destinationDirectory.set(file("${rootDir}"))
-    archiveFileName = "shadow.jar"
 }

@@ -1,0 +1,20 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation gradleApi()
+}
+
+gradlePlugin {
+    plugins {
+        myBasicPlugin {
+            id = 'io.ryoung.java-downloader'
+            implementationClass = 'io.ryoung.JavaDownloaderPlugin'
+        }
+    }
+}
