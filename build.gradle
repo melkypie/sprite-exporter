@@ -35,6 +35,7 @@ dependencies {
     implementation "org.slf4j:slf4j-simple:1.7.12"
     implementation "net.runelite:cache:${runeliteVersion}"
     implementation "net.runelite:runelite-api:${runeliteVersion}"
+    compileOnly "net.runelite:runelite-api:${runeliteVersion}"
 }
 
 description = "Resource packs sprite exporter"
