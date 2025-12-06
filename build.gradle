@@ -1,10 +1,7 @@
 plugins {
-    id 'java'
+    id 'application'
     id 'io.ryoung.java-downloader'
 }
-
-group 'melky'
-version '1.0'
 
 repositories {
     mavenLocal()
@@ -14,10 +11,22 @@ repositories {
     mavenCentral()
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'melky.Main'
-    }
+group 'melky'
+version '1.0'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.release.set(11)
+}
+//
+//jar {
+//    manifest {
+//        attributes 'Main-Class': 'melky.Main'
+//    }
+//}
+
+application {
+    mainClassName = 'melky.Main'
 }
 
 javaDownload {
@@ -33,11 +42,18 @@ dependencies {
 
     implementation 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
-}
 
-description = "Resource packs sprite exporter"
+    testImplementation 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-    options.release.set(11)
+    implementation "com.squareup.okhttp3:okhttp:3.14.9"
+    implementation "org.slf4j:slf4j-simple:1.7.10"
+
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:5.1.1'
+
+    testImplementation group: "com.google.inject.extensions", name: "guice-testlib", version: "4.1.0", {
+        exclude group: "com.google.inject", module: "guice" // already provided by runelite client
+    }
 }

@@ -8,3 +8,6 @@ nbactions.xml
 nb-configuration.xml
 nbproject/
 src/main/java/melky/resourcepacks
+out
+cache
+sample-vanilla
