@@ -1,12 +1,13 @@
 package io.ryoung;
 
+import lombok.Getter;
 import org.gradle.api.provider.Property;
 import org.gradle.api.model.ObjectFactory;
 
 import javax.inject.Inject;
 
+@Getter
 public abstract class JavaDownloadExtension {
-
 	private final Property<String> sourceUrl;
 	private final Property<String> targetPath;
 
@@ -14,13 +15,5 @@ public abstract class JavaDownloadExtension {
 	public JavaDownloadExtension(ObjectFactory objectFactory) {
 		this.sourceUrl = objectFactory.property(String.class);
 		this.targetPath = objectFactory.property(String.class);
-	}
-
-	public Property<String> getSourceUrl() {
-		return sourceUrl;
-	}
-
-	public Property<String> getTargetPath() {
-		return targetPath;
 	}
 }

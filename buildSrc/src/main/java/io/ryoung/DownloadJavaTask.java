@@ -1,5 +1,6 @@
 package io.ryoung;
 
+import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.RegularFileProperty;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+@Slf4j
 public abstract class DownloadJavaTask extends DefaultTask {
 
 	@Input
@@ -42,12 +44,9 @@ public abstract class DownloadJavaTask extends DefaultTask {
 
 		try {
 			if (!targetFile.exists()) {
-				System.out.println("Downloading Java file from: " + url);
+				log.info("Downloading Java file from: {}", url);
 
-				java.io.File parentDir = targetFile.getParentFile();
-				if (parentDir != null && !parentDir.exists()) {
-					parentDir.mkdirs();
-				}
+				com.google.common.io.Files.createParentDirs(targetFile);
 
 				HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 				connection.setRequestProperty("User-Agent", "Gradle Build Tool");
@@ -55,21 +54,15 @@ public abstract class DownloadJavaTask extends DefaultTask {
 
 				int responseCode = connection.getResponseCode();
 				if (responseCode == HttpURLConnection.HTTP_OK) {
-					try (InputStream input = connection.getInputStream();
-						 OutputStream output = Files.newOutputStream(targetFile.toPath())) {
-
-						byte[] buffer = new byte[4096];
-						int bytesRead;
-						while ((bytesRead = input.read(buffer)) != -1) {
-							output.write(buffer, 0, bytesRead);
-						}
+					try (InputStream input = connection.getInputStream();) {
+						com.google.common.io.Files.asByteSink(targetFile).writeFrom(input);
 					}
-					System.out.println("Successfully downloaded: " + targetFile.getName());
+					log.info("Successfully downloaded: {}", targetFile.getName());
 				} else {
 					throw new GradleException("Failed to download file. HTTP response: " + responseCode);
 				}
 			} else {
-				System.out.println("Java file already exists: " + targetFile.getName());
+				log.info("Java file already exists: {}",  targetFile.getName());
 			}
 		} catch (IOException e) {
 			throw new GradleException("Failed to download Java file: " + e.getMessage(), e);

@@ -1,11 +1,13 @@
 package io.ryoung;
 
+import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskProvider;
 
+@Slf4j
 public class JavaDownloaderPlugin implements Plugin<Project> {
 	@Override
 	public void apply(Project project) {
@@ -23,11 +25,11 @@ public class JavaDownloaderPlugin implements Plugin<Project> {
 			});
 
 		project.afterEvaluate(p -> {
-			System.out.println("JavaDownloaderPlugin: Configuring downloads for IDE sync...");
+			log.info("JavaDownloaderPlugin: Configuring downloads for IDE sync...");
 
 			String targetPath = extension.getTargetPath().get();
 			if (targetPath.isEmpty()) {
-				System.out.println("JavaDownloaderPlugin: Target path not configured");
+				log.info("JavaDownloaderPlugin: Target path not configured");
 				return;
 			}
 
@@ -35,12 +37,12 @@ public class JavaDownloaderPlugin implements Plugin<Project> {
 			if (!targetFile.exists()) {
 				try {
 					downloadTask.get().download();
-					System.out.println("Successfully downloaded: " + targetFile.getName());
+					log.info("Successfully downloaded: {}", targetFile.getName());
 				} catch (Exception e) {
-					System.out.println("Download during configuration failed: " + e.getMessage());
+					log.error("Download during configuration failed: {}", e.getMessage());
 				}
 			} else {
-				System.out.println("Java file already exists: " + targetFile.getName());
+				log.info("Java file already exists: {}", targetFile.getName());
 			}
 
 			var sourceSets = project.getExtensions().getByType(SourceSetContainer.class);
