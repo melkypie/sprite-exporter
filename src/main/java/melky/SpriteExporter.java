@@ -28,16 +28,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import lombok.Value;
 import net.runelite.cache.definitions.SpriteDefinition;
 
+@Value
 public class SpriteExporter
 {
-	private final SpriteDefinition sprite;
-
-	public SpriteExporter(SpriteDefinition sprite)
-	{
-		this.sprite = sprite;
-	}
+	SpriteDefinition sprite;
 
 	public BufferedImage export()
 	{

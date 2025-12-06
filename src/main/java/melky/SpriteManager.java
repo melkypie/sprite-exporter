@@ -28,6 +28,8 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import java.io.File;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import net.runelite.cache.IndexType;
 import net.runelite.cache.definitions.SpriteDefinition;
 import net.runelite.cache.definitions.loaders.SpriteLoader;
@@ -37,15 +39,12 @@ import net.runelite.cache.fs.Index;
 import net.runelite.cache.fs.Storage;
 import net.runelite.cache.fs.Store;
 
+@Value
+@RequiredArgsConstructor
 public class SpriteManager implements SpriteProvider
 {
-	private final Store store;
-	private final Multimap<Integer, SpriteDefinition> sprites = LinkedListMultimap.create();
-
-	public SpriteManager(Store store)
-	{
-		this.store = store;
-	}
+	Store store;
+	Multimap<Integer, SpriteDefinition> sprites = LinkedListMultimap.create();
 
 	public void load() throws IOException
 	{
@@ -90,7 +89,6 @@ public class SpriteManager implements SpriteProvider
 
 			SpriteExporter exporter = new SpriteExporter(sprite);
 			File png = new File(outDir, sprite.getId() + "-" + sprite.getFrame() + ".png");
-
 			exporter.exportTo(png);
 		}
 	}
