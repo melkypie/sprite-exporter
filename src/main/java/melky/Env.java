@@ -30,7 +30,5 @@ public class Env
 				.build();
 			return chain.proceed(userAgentRequest);
 		})
-		.connectionPool(new ConnectionPool(0, 10, TimeUnit.SECONDS))
 		.build();
-
 }
