@@ -21,5 +21,8 @@ public class Main
 		SpriteDumper.dump(extractFolder, spritePath);
 
 		SampleGenerator.generate(spritePath, Path.of(Env.PACK_FOLDER));
+
+		// okhttp3 connection pool hangs after http2 requests without Exit signal
+		System.exit(0);
 	}
 }
