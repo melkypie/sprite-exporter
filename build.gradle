@@ -1,50 +1,61 @@
 plugins {
     id 'java'
-    id "io.freefair.lombok" version "5.0.0-rc6"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id 'io.ryoung.java-downloader'
 }
 
-group 'melky'
-version '1.0'
-
 repositories {
-    mavenLocal() {
-        content {
-            includeGroup "net.runelite"
-        }
-    }
+    mavenLocal()
     maven {
-        url "https://repo.runelite.net"
+        url = 'https://repo.runelite.net'
     }
     mavenCentral()
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'melky.Main'
-    }
-}
-
-lombok {
-    generateLombokConfig.enabled = false
-}
-
-def runeliteVersion = "1.10.31.3"
-
-dependencies {
-    implementation "org.slf4j:slf4j-simple:1.7.12"
-    implementation "net.runelite:cache:${runeliteVersion}"
-    implementation "net.runelite:runelite-api:${runeliteVersion}"
-}
-
-description = "Resource packs sprite exporter"
+group 'melky'
+version '2.0'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.release.set(11)
 }
 
-shadowJar {
-    destinationDirectory.set(file("${rootDir}"))
-    archiveFileName = "shadow.jar"
+javaDownload {
+    sourceUrl = 'https://raw.githubusercontent.com/melkypie/resource-packs/refs/heads/master/src/main/java/melky/resourcepacks/SpriteOverride.java'
+    targetPath = 'src/main/java/melky/resourcepacks/SpriteOverride.java'
+}
+
+def runeLiteVersion = "latest.release"
+
+dependencies {
+    implementation group: 'net.runelite', name: 'cache', version: runeLiteVersion
+    implementation group: 'net.runelite', name: 'runelite-api', version: runeLiteVersion
+
+    implementation 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    testImplementation 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    implementation "com.squareup.okhttp3:okhttp:3.14.9"
+    implementation "org.slf4j:slf4j-simple:1.7.10"
+
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:5.1.1'
+
+    testImplementation group: "com.google.inject.extensions", name: "guice-testlib", version: "4.1.0", {
+        exclude group: "com.google.inject", module: "guice" // already provided by runelite client
+    }
+}
+
+tasks.register('generatePack', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    mainClass = 'melky.Main'
+
+    systemProperty('cache.old', System.getProperty('cache.old'))
+    systemProperty('cache.new', System.getProperty('cache.new'))
+    systemProperty('cache.folder', System.getProperty("cache.folder", "cache"))
+    systemProperty('cache.pack', System.getProperty("cache.pack", "sample-vanilla"))
+    systemProperty('cache.sprites', System.getProperty("cache.sprites", "sprites"))
 }

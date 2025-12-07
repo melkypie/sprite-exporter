@@ -18,56 +18,25 @@ jobs:
     name: "Sprite comparison between OSRS revs"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           java-version: '11'
-      - name: Generate sprites and diffs
+      - name: Generate sprites
         id: build
         env:
           OLD_CACHE: ${{ github.event.inputs.OLD_CACHE }}
           NEW_CACHE: ${{ github.event.inputs.NEW_CACHE }}
         run: |
-          chmod +x execute.sh
-          bash execute.sh
-      - name: Upload sprites and diff to releases
-        uses: ncipollo/release-action@v1
-        if: ${{ github.event.inputs.AS_ARTIFACTS == 'false' }}
-        with:
-          name: Sprite dump ${{ steps.build.outputs.new_cache }}
-          allowUpdates: true
-          omitBody: true
-          tag: ${{ steps.build.outputs.new_cache }}
-          artifacts: "cache/*-spritesheet-diff.png,cache/*-sprites.zip,cache/*-diff.zip"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit: master
-      - name: Upload sprites and diff as artifacts
-        if: ${{ github.event.inputs.AS_ARTIFACTS == 'true'}}
-        uses: actions/upload-artifact@v4
-        with:
-          name: sprite-diffs-${{ steps.build.outputs.new_cache }}
-          path: |
-            cache/*-spritesheet-diff.png
-            cache/*-sprites.zip
-            cache/*-diff.zip
-      - name: Fetch resource-packs sample-vanilla
-        uses: actions/checkout@v2
-        with:
-          repository: 'melkypie/resource-packs'
-          ref: 'refs/heads/sample-vanilla'
-          path: 'sample-vanilla'
-          ssh-key: ${{ secrets.RP_DEPLOY_KEY }}
-      - name: Generate changes to sample-vanilla
+          OUTPUT=$(./gradlew generatePack  2>&1 | grep -oP 'Using version: \K.*' | head -1)
+          
+          echo "::set-output name=new_cache::${OUTPUT}"
+
+      - name: Zip sprites
         env:
-          CACHE: ${{ steps.build.outputs.new_cache }}
+          NEW_CACHE: ${{ steps.build.outputs.new_cache }}
         run: |
-          java -Dresources.inputFolder="cache/$CACHE/sprites" -Dresources.outputFolder="sample-vanilla" -jar shadow.jar build-sample
-      - name: Push changes to sample-vanilla
-        uses: EndBug/add-and-commit@v7
-        with:
-          add: '-A'
-          message: Add changes by update ${{ steps.build.outputs.new_cache }}
-          branch: sample-vanilla
-          pull_strategy: 'NO-PULL'
-          cwd: './sample-vanilla'
-          default_author: github_actions
+          zip -qr $NEW_CACHE-sprites.zip cache/$NEW_CACHE/sprites
+
+
+    
