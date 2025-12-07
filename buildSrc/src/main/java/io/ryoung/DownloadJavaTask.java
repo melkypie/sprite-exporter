@@ -54,7 +54,7 @@ public abstract class DownloadJavaTask extends DefaultTask {
 
 				int responseCode = connection.getResponseCode();
 				if (responseCode == HttpURLConnection.HTTP_OK) {
-					try (InputStream input = connection.getInputStream();) {
+					try (InputStream input = connection.getInputStream()) {
 						com.google.common.io.Files.asByteSink(targetFile).writeFrom(input);
 					}
 					log.info("Successfully downloaded: {}", targetFile.getName());

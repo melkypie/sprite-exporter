@@ -58,7 +58,7 @@ public class CacheDownloader
 			log.info("Downloaded {}", revision);
 
 			Files.createDirectories(outFile.getParent());
-			try (InputStream inputStream = response.body().byteStream();)
+			try (InputStream inputStream = response.body().byteStream())
 			{
 				Files.copy(inputStream, outFile, StandardCopyOption.REPLACE_EXISTING);
 			}

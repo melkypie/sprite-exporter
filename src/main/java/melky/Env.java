@@ -1,8 +1,6 @@
 package melky;
 
-import java.util.concurrent.TimeUnit;
 import lombok.experimental.UtilityClass;
-import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
