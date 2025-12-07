@@ -16,6 +16,8 @@ public class Main
 			var cacheDownloader = new CacheDownloader(Env.OLD_CACHE, Env.NEW_CACHE);
 			var cachePath = Path.of(Env.CACHE_FOLDER);
 
+			log.info("Using version: {}", cacheDownloader.getNewCache());
+
 			// todo: maybe generate sprite diffs later
 			var archive = cacheDownloader.downloadRevision(cachePath, cacheDownloader.getNewCache());
 			var extractFolder = cachePath.resolve(cacheDownloader.getNewCache());
