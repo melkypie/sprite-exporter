@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
     id 'io.ryoung.java-downloader'
 }
 
@@ -12,21 +12,11 @@ repositories {
 }
 
 group 'melky'
-version '1.0'
+version '2.0'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.release.set(11)
-}
-//
-//jar {
-//    manifest {
-//        attributes 'Main-Class': 'melky.Main'
-//    }
-//}
-
-application {
-    mainClassName = 'melky.Main'
 }
 
 javaDownload {
@@ -56,4 +46,16 @@ dependencies {
     testImplementation group: "com.google.inject.extensions", name: "guice-testlib", version: "4.1.0", {
         exclude group: "com.google.inject", module: "guice" // already provided by runelite client
     }
+}
+
+tasks.register('generatePack', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    mainClass = 'melky.Main'
+
+    systemProperty('cache.old', System.getProperty('cache.old'))
+    systemProperty('cache.new', System.getProperty('cache.new'))
+    systemProperty('cache.folder', System.getProperty("cache.folder", "cache"))
+    systemProperty('cache.pack', System.getProperty("cache.pack", "sample-vanilla"))
+    systemProperty('cache.sprites', System.getProperty("cache.sprites", "sprites"))
 }
