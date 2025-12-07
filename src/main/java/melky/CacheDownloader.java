@@ -8,10 +8,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -19,7 +17,6 @@ import okhttp3.Response;
 @Getter
 public class CacheDownloader
 {
-	private static final OkHttpClient client = new OkHttpClient();
 	private static final Gson gson = new Gson();
 
 	String oldCache;
@@ -51,7 +48,7 @@ public class CacheDownloader
 			.header("User-Agent", "Java-OkHttp-Client")
 			.build();
 
-		try (Response response = client.newCall(request).execute())
+		try (Response response = Env.CLIENT.newCall(request).execute())
 		{
 			if (!response.isSuccessful())
 			{
@@ -113,14 +110,14 @@ public class CacheDownloader
 			.header("User-Agent", "Java-OkHttp-Client")
 			.build();
 
-		try (Response response = client.newCall(request).execute())
+		try (Response response = Env.CLIENT.newCall(request).execute())
 		{
 			if (!response.isSuccessful())
 			{
 				throw new IOException("HTTP request failed: " + response.code() + " - " + response.message());
 			}
 
-			return Objects.requireNonNull(response.body()).string();
+			return response.body().string();
 		}
 	}
 
