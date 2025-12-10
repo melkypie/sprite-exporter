@@ -45,9 +45,8 @@ jobs:
       - name: Set cache name
         id: parsed
         run: |
-          cat gradle_output.txt
-          OUTPUT=$(cat gradle_output.txt | grep -oP 'new cache version: \K.*' | head -1)
-          echo "new_cache=$OUTPUT" >> $GITHUB_OUTPUT
+          NEW_CACHE=$(cat gradle_output.txt | grep -oP 'new cache version: \K.*' | head -1)
+          echo "new_cache=$NEW_CACHE" >> $GITHUB_OUTPUT
 
       - name: Zip sprites
         env:
@@ -55,7 +54,19 @@ jobs:
         run: |
           zip -qr cache/$NEW_CACHE-sprites.zip cache/$NEW_CACHE/sprites
 
-      - name: Upload sprites
+      - name: Upload sprites to releases
+        uses: ncipollo/release-action@v1
+        if: ${{ github.event.inputs.AS_ARTIFACTS == 'false' }}
+        with:
+          name: Sprite dump ${{ steps.parsed.outputs.new_cache }}
+          allowUpdates: true
+          omitBody: true
+          tag: ${{ steps.parsed.outputs.new_cache }}
+          artifacts: "cache/*-sprites.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit: master
+
+      - name: Upload sprites to archives
         if: ${{ github.event.inputs.AS_ARTIFACTS == 'true'}}
         uses: actions/upload-artifact@v4
         with:
@@ -66,15 +77,15 @@ jobs:
       - name: Echo changes
         run: echo "Add changes by update ${{ steps.parsed.outputs.new_cache }}"
 
-#      - name: Push changes to sample-vanilla
-#        uses: EndBug/add-and-commit@v7
-#        with:
-#          add: '-A'
-#          message: Add changes by update ${{ steps.build.outputs.new_cache }}
-#          branch: sample-vanilla
-#          pull_strategy: 'NO-PULL'
-#          cwd: './sample-vanilla'
-#          default_author: github_actions
+      - name: Push changes to sample-vanilla
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: '-A'
+          message: Add changes by update ${{ steps.build.outputs.new_cache }}
+          branch: sample-vanilla
+          pull_strategy: 'NO-PULL'
+          cwd: './sample-vanilla'
+          default_author: github_actions
 
 
     
