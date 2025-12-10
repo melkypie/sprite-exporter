@@ -40,7 +40,7 @@ jobs:
           OLD_CACHE: ${{ github.event.inputs.OLD_CACHE }}
           NEW_CACHE: ${{ github.event.inputs.NEW_CACHE }}
         run: |
-          ./gradlew generatePack | tee gradle_output.txt 
+          ./gradlew generatePack | tee gradle_output.txt 2>&1
 
       - name: Set cache name
         id: parsed
