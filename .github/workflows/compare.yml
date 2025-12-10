@@ -42,13 +42,6 @@ jobs:
         run: |
           # Capture output to a file
           ./gradlew generatePack > gradle_output.txt 2>&1
-          # Store the file content properly
-          OUTPUT=$(cat gradle_output.txt)
-          # Escape the content for GitHub output
-          OUTPUT="${OUTPUT//'%'/'%25'}"
-          OUTPUT="${OUTPUT//$'\n'/'%0A'}"
-          OUTPUT="${OUTPUT//$'\r'/'%0D'}"
-          echo "sysout=${OUTPUT}" >> $GITHUB_OUTPUT
           cat gradle_output.txt
 
       - name: Set cache name
