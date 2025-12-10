@@ -73,6 +73,8 @@ public class CacheDownloader
 	{
 		if (isValid(oldCache) && isValid(newCache))
 		{
+			log.info("Using old cache version: {}", this.oldCache);
+			log.info("Using new cache version: {}", this.newCache);
 			return this;
 		}
 

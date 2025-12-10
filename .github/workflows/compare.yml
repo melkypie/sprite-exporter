@@ -54,7 +54,7 @@ jobs:
       - name: Set cache name
         id: parsed
         run: |
-          OUTPUT=$(cat gradle_output | grep -oP 'Using version: \K.*' | head -1)
+          OUTPUT=$(cat gradle_output.txt | grep -oP 'new cache version: \K.*' | head -1)
           echo "new_cache=$OUTPUT" >> $GITHUB_OUTPUT
 
       - name: Zip sprites
