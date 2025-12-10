@@ -18,6 +18,9 @@ jobs:
     name: "Sprite comparison between OSRS revs"
     runs-on: ubuntu-latest
     steps:
+      - name: Output Inputs
+        run: echo "${{ toJSON(github.event.inputs) }}"
+
       - uses: actions/checkout@v6
 
       - name: Fetch resource-packs sample-vanilla
