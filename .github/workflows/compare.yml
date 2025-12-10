@@ -45,6 +45,7 @@ jobs:
       - name: Set cache name
         id: parsed
         run: |
+          cat gradle_output.txt
           OUTPUT=$(cat gradle_output.txt | grep -oP 'new cache version: \K.*' | head -1)
           echo "new_cache=$OUTPUT" >> $GITHUB_OUTPUT
 
