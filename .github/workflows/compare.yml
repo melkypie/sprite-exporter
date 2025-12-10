@@ -72,7 +72,7 @@ jobs:
             cache/*-sprites.zip
 
       - name: Echo changes
-        run: Add changes by update ${{ steps.parsed.outputs.new_cache }}
+        run: echo "Add changes by update ${{ steps.parsed.outputs.new_cache }}"
 
 #      - name: Push changes to sample-vanilla
 #        uses: EndBug/add-and-commit@v7
