@@ -40,7 +40,11 @@ jobs:
           OLD_CACHE: ${{ github.event.inputs.OLD_CACHE }}
           NEW_CACHE: ${{ github.event.inputs.NEW_CACHE }}
         run: |
-          OUTPUT=$(./gradlew generatePack  2>&1 | grep -oP 'Using version: \K.*' | head -1)
+          OUTPUT=$(./gradlew generatePack  2>&1)
+          
+          echo $OUTPUT
+          
+          OUTPUT=$(echo $OUTPUT | grep -oP 'Using version: \K.*' | head -1)
           
           echo "::set-output name=new_cache::${OUTPUT}"
 
@@ -48,7 +52,7 @@ jobs:
         env:
           NEW_CACHE: ${{ steps.build.outputs.new_cache }}
         run: |
-          zip -qr $NEW_CACHE-sprites.zip cache/$NEW_CACHE/sprites
+          zip -qr cache/$NEW_CACHE-sprites.zip cache/$NEW_CACHE/sprites
 
       - name: Upload sprites
         if: ${{ github.event.inputs.AS_ARTIFACTS == 'true'}}
