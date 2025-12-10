@@ -49,12 +49,12 @@ jobs:
           OUTPUT="${OUTPUT//$'\n'/'%0A'}"
           OUTPUT="${OUTPUT//$'\r'/'%0D'}"
           echo "sysout=${OUTPUT}" >> $GITHUB_OUTPUT
+          cat gradle_output.txt
 
       - name: Set cache name
         id: parsed
         run: |
-          SYS_OUTPUT="${{ steps.build.outputs.sysout }}"
-          OUTPUT=$(echo "$SYS_OUTPUT" | grep -oP 'Using version: \K.*' | head -1)
+          OUTPUT=$(cat gradle_output | grep -oP 'Using version: \K.*' | head -1)
           echo "new_cache=$OUTPUT" >> $GITHUB_OUTPUT
 
       - name: Zip sprites
