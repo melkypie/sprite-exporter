@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
-import melky.resourcepacks.SpriteOverride;
+import melky.resourcepacks.model.SpriteOverride;
 
 @Slf4j
 public class SampleGenerator

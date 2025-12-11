@@ -20,8 +20,8 @@ tasks.withType(JavaCompile) {
 }
 
 javaDownload {
-    sourceUrl = 'https://raw.githubusercontent.com/melkypie/resource-packs/refs/heads/master/src/main/java/melky/resourcepacks/SpriteOverride.java'
-    targetPath = 'src/main/java/melky/resourcepacks/SpriteOverride.java'
+    sourceUrl = 'https://raw.githubusercontent.com/melkypie/resource-packs/refs/heads/master/src/main/java/melky/resourcepacks/model/SpriteOverride.java'
+    targetPath = 'src/main/java/melky/resourcepacks/model/SpriteOverride.java'
 }
 
 def runeLiteVersion = "latest.release"
