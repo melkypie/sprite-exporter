@@ -42,11 +42,25 @@ public class SampleGenerator
 			String fileName = override.getSpriteID() + "-" + (override.getFrameID() != -1 ? override.getFrameID() : 0) + ".png";
 			File sourceSprite = inputFolder.resolve(fileName).toFile();
 
-			if (sourceSprite.exists() &&
-				!(destinationSprite.exists() && Files.equal(sourceSprite, destinationSprite)))
+			if (sourceSprite.exists())
 			{
-				Files.copy(sourceSprite, destinationSprite);
-				log.info("Updated sprite {} ({})", override.name(), override.getSpriteID());
+				if (!destinationSprite.exists())
+				{
+					Files.copy(sourceSprite, destinationSprite);
+					log.info("New sprite {} ({})", override.name(), override.getSpriteID());
+				} else if (!Files.equal(sourceSprite, destinationSprite))
+				{
+					Files.copy(sourceSprite, destinationSprite);
+					log.info("Update sprite {} ({})", override.name(), override.getSpriteID());
+				}
+				else
+				{
+					log.info("Sprite up-to-date {} ({})", override.name(), override.getSpriteID());
+				}
+			}
+			else
+			{
+				log.info("Missing source sprite {} ({})", override.name(), override.getSpriteID());
 			}
 		}
 
