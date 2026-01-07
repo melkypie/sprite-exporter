@@ -38,7 +38,9 @@ dependencies {
 
     implementation "com.squareup.okhttp3:okhttp:3.14.9"
     implementation "org.slf4j:slf4j-simple:1.7.10"
-
+    implementation "com.google.guava:guava:23.2-jre"
+    implementation "org.apache.commons:commons-compress:1.10"
+    implementation "com.google.code.gson:gson:2.8.5"
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:5.1.1'
