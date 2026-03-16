@@ -25,6 +25,8 @@ public class SampleGenerator
 			throw new IOException(inputFolder + " does not exist");
 		}
 
+		log.info("Generating pack at {}", outputFolder);
+
 		for (SpriteOverride override : SpriteOverride.values())
 		{
 			// TODO:
