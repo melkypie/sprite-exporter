@@ -17,6 +17,8 @@ jobs:
   compare:
     name: "Sprite comparison between OSRS revs"
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Output Inputs
         run: echo "${{ toJSON(github.event.inputs) }}"
@@ -83,7 +85,6 @@ jobs:
           add: '-A'
           message: Add changes by update ${{ steps.build.outputs.new_cache }}
           branch: sample-vanilla
-          pull: 'NO-PULL'
           cwd: './sample-vanilla'
           default_author: github_actions
 
