@@ -17,8 +17,6 @@ jobs:
   compare:
     name: "Sprite comparison between OSRS revs"
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Output Inputs
         run: echo "${{ toJSON(github.event.inputs) }}"
@@ -34,7 +32,7 @@ jobs:
           ssh-key: ${{ secrets.RP_DEPLOY_KEY }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Generate sprites
         id: build
@@ -70,7 +68,7 @@ jobs:
 
       - name: Upload sprites to archives
         if: ${{ github.event.inputs.AS_ARTIFACTS == 'true'}}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sprite-${{ steps.parsed.outputs.new_cache }}
           path: |
@@ -80,7 +78,7 @@ jobs:
         run: echo "Add changes by update ${{ steps.parsed.outputs.new_cache }}"
 
       - name: Push changes to sample-vanilla
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v10
         with:
           add: '-A'
           message: Add changes by update ${{ steps.build.outputs.new_cache }}
