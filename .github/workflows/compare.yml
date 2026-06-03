@@ -34,19 +34,33 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Generate sprites
+      - name: Dump sprites
         id: build
         env:
           OLD_CACHE: ${{ github.event.inputs.OLD_CACHE }}
           NEW_CACHE: ${{ github.event.inputs.NEW_CACHE }}
         run: |
-          ./gradlew generatePack  2>&1 | tee gradle_output.txt
+          ./gradlew dumpSprites 2>&1 | tee gradle_output.txt
 
       - name: Set cache name
         id: parsed
         run: |
           NEW_CACHE=$(cat gradle_output.txt | grep -oP 'new cache version: \K.*' | head -1)
           echo "new_cache=$NEW_CACHE" >> $GITHUB_OUTPUT
+
+      - name: Download latest generator release
+        uses: dsaltares/fetch-gh-release-asset@1.1.0
+        with:
+          repo: 'raiyni/resource-packs-tools'
+          file: 'generator-v.*\.jar'
+          regex: true
+          target: "./"
+
+      - name: Run SpriteSyncer
+        env:
+          NEW_CACHE: ${{ steps.parsed.outputs.new_cache }}
+        run: |
+          java -DspriteFolder=cache/$NEW_CACHE/sprites -DoutputDir=sample-vanilla -cp generator-v*.jar melky.resourcepacks.generator.SpriteSyncer
 
       - name: Zip sprites
         env:
@@ -85,6 +99,3 @@ jobs:
           branch: sample-vanilla
           cwd: './sample-vanilla'
           default_author: github_actions
-
-
-    

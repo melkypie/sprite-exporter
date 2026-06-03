@@ -25,8 +25,6 @@ public class Main
 
 			Path spritePath = extractFolder.resolve(Env.SPRITE_FOLDER);
 			SpriteDumper.dump(extractFolder, spritePath);
-
-			SampleGenerator.generate(spritePath, Path.of(Env.PACK_FOLDER));
 		}
 		catch (Throwable e)
 		{
