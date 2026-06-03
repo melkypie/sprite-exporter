@@ -4,13 +4,13 @@ Exports OSRS sprites with correct sizing
 
 ##  Command
 
-`./gradlew generatePack`
+`./gradlew dumpSprites`
 
 ### Properties
 
 | Property        | Default          | Description                                                       |
 | --------------- | ---------------- | ----------------------------------------------------------------- |
-| `cache.new`     | \`<empty>\`      | The cache revision to fetch. Empty version will fetch the latest. |
+| `cache.new`     | `<empty>`        | The cache revision to fetch. Empty version will fetch the latest. |
+| `cache.old`     | `<empty>`        | The previous cache revision. Empty version will fetch the latest. |
 | `cache.folder`  | `cache`          | Folder to download and dump cache revisions to.                   |
-| `cache.pack`    | `sample-vanilla` | Folder to generate sample pack at.                                |
-| `cache.sprites` | `sprites`        | Folder under `cache/REVISOIN` to dump sprites                     |
+| `cache.sprites` | `sprites`        | Folder under `cache/REVISION` to dump sprites                     |

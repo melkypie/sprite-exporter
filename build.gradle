@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'io.ryoung.java-downloader'
 }
 
 repositories {
@@ -17,11 +16,6 @@ version '2.0'
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.release.set(11)
-}
-
-javaDownload {
-    sourceUrl = 'https://raw.githubusercontent.com/melkypie/resource-packs/refs/heads/master/src/main/java/melky/resourcepacks/model/SpriteOverride.java'
-    targetPath = 'src/main/java/melky/resourcepacks/model/SpriteOverride.java'
 }
 
 def runeLiteVersion = "latest.release"
@@ -50,7 +44,7 @@ dependencies {
     }
 }
 
-tasks.register('generatePack', JavaExec) {
+tasks.register('dumpSprites', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
     mainClass = 'melky.Main'
@@ -58,6 +52,5 @@ tasks.register('generatePack', JavaExec) {
     systemProperty('cache.old', System.getProperty('cache.old'))
     systemProperty('cache.new', System.getProperty('cache.new'))
     systemProperty('cache.folder', System.getProperty("cache.folder", "cache"))
-    systemProperty('cache.pack', System.getProperty("cache.pack", "sample-vanilla"))
     systemProperty('cache.sprites', System.getProperty("cache.sprites", "sprites"))
 }
